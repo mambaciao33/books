@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/adbar::topbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="commons/adbar::#sidebar(activeUri='/admin_reader_edit.html')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-offset-3" style="position: relative;top: 10%">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">编辑读者信息[[${readerInfos.getName()}]]</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form th:action="@{/reader_edit_do.html}">
+                            <div class="input-group">
+                                <span  class="input-group-addon">读者证号</span>
+                                <input readonly="readonly" type="text" class="form-control" name="readerId" id="readerId" th:value="${readerInfos.getReaderId()}">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">姓名</span>
+                                <input type="text" class="form-control" name="name" id="name" th:value="${readerInfos.getName()}">
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">性别</span>
+                                <input type="text" class="form-control" name="sex" id="sex"  th:value="${readerInfos.getSex()}" >
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">生日</span>
+                                <input type="text" class="form-control" name="birth" id="birth"  th:value="${#dates.format(readerInfos.getBirth(), 'yyyy-MM-dd')}" >
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">地址</span>
+                                <input type="text" class="form-control" name="address" id="address"  th:value="${readerInfos.getAddress()}" >
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">电话</span>
+                                <input type="text" class="form-control" name="telcode" id="telcode" th:value="${readerInfos.getTelcode()}" >
+                            </div>
+                            <input type="submit" value="确定" class="btn btn-success btn-sm">
+                        </form>
+                        <script type="text/javascript"  th:src="@{/asserts/js/jquery-3.4.1.js}"></script>
+                        <script>
+                            function mySubmit(flag){
+                                return flag;
+                            }
+                            $("#readeredit").submit(function () {
+                                if($("#name").val()==''||$("#author").val()==''||$("#publish").val()==''||$("#isbn").val()==''||$("#introduction").val()==''||$("#language").val()==''||$("#price").val()==''||$("#pubdate").val()==''||$("#classId").val()==''||$("#pressmark").val()==''||$("#state").val()==''){
+                                    alert("请填入完整读者信息！");
+                                    return mySubmit(false);
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+
+</body>
+
+</html>

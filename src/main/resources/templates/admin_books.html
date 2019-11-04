@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/adbar::topbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="commons/adbar::#sidebar(activeUri='/admin_books.html')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div style="position: relative;top: 10%">
+                <div th:if="${succ} != null">
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert"
+                                aria-hidden="true">
+                        </button>
+                        [[${succ}]]
+                    </div>
+                </div>
+                <div th:if="${error} != null">
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert"
+                                aria-hidden="true">
+                        </button>
+                        [[${error}]]
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" style="width: 90%;margin-left: 5%">
+                <div class="panel-heading" style="background-color: #fff">
+                    <h3 class="panel-title">
+                        全部图书
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>OO</th>
+                            <th>书名</th>
+                            <th>作者</th>
+                            <th>出版社</th>
+                            <th>ISBN</th>
+                            <th>价格</th>
+                            <th>借还</th>
+                            <th>详情</th>
+                            <th>编辑</th>
+                            <th>删除</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="book: ${books}">
+                                <td th:text="${book.getBookId()}"></td>
+                                <td th:text="${book.getName()}"></td>
+                                <td th:text="${book.getAuthor()}"></td>
+                                <td th:text="${book.getPublish()}"></td>
+                                <td th:text="${book.getIsbn()}"></td>
+                                <td th:text="${book.getPrice()}"></td>
+                                <p th:if ="${book.getState()==1}">
+                                <td><a th:href="@{/lendbook.html/}+${book.getBookId()}"><button type="button" class="btn btn-cyan btn-xs">借阅</button></a></td>
+                                </p>
+                                <p th:if ="${book.getState()==0}">
+                                <td><a th:href="@{/returnbook.html/}+${book.getBookId()}"><button type="button" class="btn btn-danger btn-xs">归还</button></a></td>
+                                </p>
+                                <td><a th:href="@{/bookdetail.html/}+${book.getBookId()}"><button type="button" class="btn btn-success btn-xs">详细</button></a></td>
+                                <td><a th:href="@{/updatebook.html/}+${book.getBookId()}"><button type="button" class="btn btn-primary btn-xs">编辑</button></a></td>
+                                <td><a th:href="@{/deletebook2.html/}+${book.getBookId()}"><button type="button" class="btn btn-danger btn-xs">删除</button></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+
+</body>
+
+</html>

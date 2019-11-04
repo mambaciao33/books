@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/bar::topbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="commons/bar::#sidebar(activeUri='reader_book_query')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div>
+                <form   method="post" action="reader_querybook_do.html" class="form-inline"  id="searchform">
+                    <div class="input-group">
+                        <input type="text" placeholder="输入图书号或图书名"  id="search" name="searchWord" class="form-control">
+                        <span class="input-group-btn">
+                            <input type="submit" value="搜索" class="btn btn-default">
+                         </span>
+                    </div>
+                </form>
+                <script type="text/javascript"  th:src="@{/asserts/js/jquery-3.4.1.js}"></script>
+                <script>
+                    function mySubmit(flag){
+                        return flag;
+                    }
+                    $("#searchform").submit(function () {
+                        var val=$("#search").val();
+                        if(val==''){
+                            alert("请输入关键字");
+                            return mySubmit(false);
+                        }
+                    })
+                </script>
+            </div>
+            <div th:if="${session.abooks} != null" >　　　
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            查询结果：
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover" id="table1">
+        <!--                    <thead>
+                            <tr>
+                                <th>书名</th>
+                                <th>作者</th>
+                                <th>出版社</th>
+                                <th>ISBN</th>
+                                <th>价格</th>
+                                <th>状态</th>
+                                <th>详情</th>
+                            </tr>
+                            </thead>-->
+                            <tbody id="table2" >
+                            <tr>
+                                <th>bbb</th>
+                                <th>书名</th>
+                                <th>作者</th>
+                                <th>出版社</th>
+                                <th>ISBN</th>
+                                <th>价格</th>
+                                <th>状态</th>
+                                <th>详情</th>
+                            </tr>
+                            <tr th:each="book:${session.abooks}">
+                                <td th:text="${book.bookId}"></td>
+                                <td th:text="${book.name}"></td>
+                                <td th:text="${book.author}"></td>
+                                <td th:text="${book.publish}"></td>
+                                <td th:text="${book.isbn}"></td>
+                                <td th:text="${book.price}"></td>
+                                <td>
+                                    <p th:if ="${book.getState()}==1">在馆</p>
+                                    <p th:if ="${book.getState()}==0">借出</p>
+                                </td>
+                                <td>
+                                    <a  th:href="@{/readerbookdetail.html/}+${book.bookId}"><button type="button" class="btn btn-success btn-xs">详情</button></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div align="center"> <span id="spanFirst">第一页</span> <span id="spanPre">上一页</span> <span id="spanNext">下一页</span> <span id="spanLast">最后一页</span> 第<span id="spanPageNum"></span>页/共<span id="spanTotalPage"></span>页</div>
+                        <script>
+                            var theTable = document.getElementById("table2");
+                            var totalPage = document.getElementById("spanTotalPage");
+                            var pageNum = document.getElementById("spanPageNum");
+
+                            var spanPre = document.getElementById("spanPre");
+                            var spanNext = document.getElementById("spanNext");
+                            var spanFirst = document.getElementById("spanFirst");
+                            var spanLast = document.getElementById("spanLast");
+
+                            var numberRowsInTable = theTable.rows.length;
+                            var pageSize =5;
+                            var page =1;
+
+                            //下一页
+                            function next() {
+                                hideTable();
+                                currentRow = pageSize * page;
+                                maxRow = currentRow + pageSize;
+                                if (maxRow > numberRowsInTable) maxRow = numberRowsInTable;
+                                for (var i = currentRow; i < maxRow; i++) {
+
+                                    theTable.rows[i].style.display = '';
+                                }
+                                page++;
+
+                                if (maxRow == numberRowsInTable) {
+                                    nextText();
+                                    lastText();
+                                }
+                                showPage();
+                                preLink();
+                                firstLink();
+                            }
+
+                            //上一页
+                            function pre() {
+                                hideTable();
+                                page--;
+                                currentRow = pageSize * page;
+                                maxRow = currentRow - pageSize;
+                                if (currentRow > numberRowsInTable) currentRow = numberRowsInTable;
+                                for (var i = maxRow; i < currentRow; i++) {
+                                    theTable.rows[i].style.display = '';
+                                }
+
+                                if (maxRow == 0) {
+                                    preText();
+                                    firstText();
+                                }
+                                showPage();
+                                nextLink();
+                                lastLink();
+                            }
+
+                            //第一页
+                            function first() {
+                                hideTable();
+                                page = 1;
+                                for (var i = 0; i < pageSize; i++) {
+                                    theTable.rows[i].style.display = '';
+                                }
+                                showPage();
+                                preText();
+                                nextLink();
+                                lastLink();
+                            }
+
+                            //最后一页
+                            function last() {
+                                hideTable();
+                                page = pageCount();
+                                currentRow = pageSize * (page - 1);
+                                for (var i = currentRow; i < numberRowsInTable; i++) {
+                                    theTable.rows[i].style.display = '';
+                                }
+                                showPage();
+                                preLink();
+                                nextText();
+                                firstLink();
+                            }
+
+                            function hideTable() {
+                                for (var i = 0; i < numberRowsInTable; i++) {
+                                    theTable.rows[0].style.display = '';
+                                    theTable.rows[i].style.display = 'none';
+                                }
+                            }
+
+                            function showPage() {
+                                pageNum.innerHTML = page;
+                            }
+
+
+                            //总共页数
+                            function pageCount() {
+                                var count = 0;
+                                if (numberRowsInTable % pageSize != 0) count = 1;
+                                return parseInt(numberRowsInTable / pageSize) + count;
+                            }
+
+                            //显示链接
+                            function preLink() {
+                                spanPre.innerHTML = "<a href='javascript:pre();'>上一页</a>";
+                            }
+
+                            function preText() {
+                                spanPre.innerHTML = "上一页";
+                            }
+
+                            function nextLink() {
+                                spanNext.innerHTML = "<a href='javascript:next();'>下一页</a>";
+                            }
+
+                            function nextText() {
+                                spanNext.innerHTML = "下一页";
+                            }
+
+
+                            function firstLink() {
+                                spanFirst.innerHTML = "<a href='javascript:first();'>第一页</a>";
+                            }
+
+                            function firstText() {
+                                spanFirst.innerHTML = "第一页";
+                            }
+
+                            function lastLink() {
+                                spanLast.innerHTML = "<a href='javascript:last();'>最后一页</a>";
+                            }
+
+                            function lastText() {
+                                spanLast.innerHTML = "最后一页";
+                            }
+
+                            //隐藏表格
+                            function hide() {
+                                for (var i = pageSize; i < numberRowsInTable; i++) {
+                                    theTable.rows[i].style.display = 'none';
+                                }
+
+                                totalPage.innerHTML = pageCount();
+                                pageNum.innerHTML = '1';
+
+                                nextLink();
+                                lastLink();
+                            }
+                            hide();
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+
+</html>>

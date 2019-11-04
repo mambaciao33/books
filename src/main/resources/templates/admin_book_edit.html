@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/adbar::topbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="commons/adbar::#sidebar(activeUri='/admin_book_edit.html')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-offset-3" style="position: relative;top: 10%">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">编辑 [[${detail.name}]]</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form th:action="@{/book_edit_do.html}">
+                            <div class="input-group">
+                                <span  class="input-group-addon">id</span>
+                                <input type="text" class="form-control" name="bookId" id="bookId" th:value="${detail.getBookId()}">
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">书名</span>
+                                <input type="text" class="form-control" name="name" id="name" th:value="${detail.getName()}">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">作者</span>
+                                <input type="text" class="form-control" name="author" id="author" th:value="${detail.getAuthor()}" >
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">出版社</span>
+                                <input type="text" class="form-control" name="publish" id="publish" th:value="${detail.getPublish()}" >
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">ISBN</span>
+                                <input type="text" class="form-control" name="isbn" id="isbn"  th:value="${detail.getIsbn()}" >
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">简介</span>
+                                <input type="text" class="form-control" name="introduction" id="introduction"  th:value="${detail.getIntroduction()}" >
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">语言</span>
+                                <input type="text" class="form-control" name="language" id="language" th:value="${detail.getLanguage()}" >
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">价格</span>
+                                <input type="text" class="form-control" name="price"  id="price" th:value="${detail.getPrice()}">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">出版日期</span>
+                                <input type="text" class="form-control" name="pubdate" id="pubdate" th:value="${#dates.format(detail.getPubdate(), 'yyyy-MM-dd')}">
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">分类号</span>
+                                <input type="text" class="form-control" name="classId" id="classId" th:value="${detail.getClassId()}">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">书架号</span>
+                                <input type="text" class="form-control" name="pressmark" id="pressmark" th:value="${detail.getPressmark()}">
+                            </div>
+                            <div class="input-group">
+                                <span  class="input-group-addon">状态</span>
+                                <input type="text" class="form-control" name="state"  id="state" th:value="${detail.getState()}">
+                            </div>
+                            <input type="submit" value="确定" class="btn btn-success btn-sm" >
+                            <script type="text/javascript"  th:src="@{/asserts/js/jquery-3.4.1.js}"></script>
+                            <script>
+                                function mySubmit(flag){
+                                    return flag;
+                                }
+                                $("#addbook").submit(function () {
+                                    if($("#name").val()==''||$("#author").val()==''||$("#publish").val()==''||$("#isbn").val()==''||$("#introduction").val()==''||$("#language").val()==''||$("#price").val()==''||$("#pubdate").val()==''||$("#classId").val()==''||$("#pressmark").val()==''||$("#state").val()==''){
+                                        alert("请填入完整图书信息！");
+                                        return mySubmit(false);
+                                    }
+                                })
+                            </script>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+
+</body>
+
+</html>

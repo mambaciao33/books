@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
+    <script type="text/javascript"  th:src="@{/asserts/js/jquery-3.4.1.js}"></script>
+    <!-- Custom styles for this template -->
+    <script type="text/javascript"  th:src="@{/asserts/js/bootstrap.min.js}"></script>
+    <link href="asserts/css/dashboard.css" th:href="@{/asserts/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+<!--引入topbar-->
+<div th:replace="commons/bar::topbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="commons/bar::#sidebar(activeUri='reader_info.html')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+
+            <div class="col-xs-5 col-md-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            我的信息
+                        </h3>
+                    </div>
+                    <button  class="btn btn-primary btn-xs">个人头像</button>
+                    <form action="/uploads" method="post" enctype="multipart/form-data">
+                        <div class="divcss5">
+                            <img  th:src="@{${readerinfo.getImg()}}"  style="height: 170px;width: 250px " id="avarimgs">
+                            <input type="file"  name="file" id="xdaTanFileImg" onchange="xmTanUploadImg(this)" accept="image/*">
+                            <!--<p>************************************************************************************</p>-->
+                            <hr/>
+                            <button type="submit" class="btn btn-success btn-xs">修改头像</button>
+                        </div>
+                    </form>
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th width="20%">读者证号</th>
+                                <td>[[${readerinfo.readerId}]]</td>
+                            </tr>
+                            <tr>
+                                <th>姓名</th>
+                                <td>[[${readerinfo.name}]]</td>
+                            </tr>
+                            <tr>
+                                <th>性别</th>
+                                <td>[[${readerinfo.sex}]]</td>
+                            </tr>
+                            <tr>
+                                <th>生日</th>
+                                <td th:text="${#dates.format(readerinfo.birth, 'yyyy-MM-dd')}"></td>
+                            </tr>
+                            <tr>
+                                <th>地址</th>
+                                <td th:text="${readerinfo.address}"></td>
+                            </tr>
+                            <tr>
+                                <th>电话</th>
+                                <td>[[${readerinfo.telcode}]]</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a class="btn btn-success btn-sm" href="reader_info_edit" role="button">修改信息</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script type="text/javascript">
+    if (typeof FileReader == 'undefined') {
+        document.getElementById("xmTanDiv").InnerHTML = "<h1>当前浏览器不支持FileReader接口</h1>";
+        document.getElementById("xdaTanFileImg").setAttribute("disabled", "disabled");
+    }
+    //选择图片，马上预览
+    function xmTanUploadImg(obj) {
+        var file = obj.files[0];
+        console.log(obj);console.log(file);
+        console.log("file.size = " + file.size);
+        var reader = new FileReader();
+        reader.onloadstart = function (e) {
+            console.log("开始读取....");
+        }
+        reader.onprogress = function (e) {
+            console.log("正在读取中....");
+        }
+        reader.onabort = function (e) {
+            console.log("中断读取....");
+        }
+        reader.onerror = function (e) {
+            console.log("读取异常....");
+        }
+        reader.onload = function (e) {
+            console.log("成功读取....");
+            var img = document.getElementById("avarimgs");
+            img.src = e.target.result;
+            //或者 img.src = this.result;  //e.target == this
+        }
+        reader.readAsDataURL(file)
+    }
+</script>
+
+</body>
+
+</html>>

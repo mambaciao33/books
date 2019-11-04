@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>绿色清爽响应式登录页面模板</title>
+    <link rel="stylesheet" href="../static/asserts/css/login.css" th:href="@{asserts/css/login.css}">
+</head>
+<body>
+<div class="dowebok">
+    <div class="logo"></div>
+    <div class="form-item">
+        <label for="id">用户名</label>
+        <input id="id" type="text" autocomplete="off" placeholder="用户名">
+    </div>
+    <div class="form-item">
+        <label for="passwd">密码</label>
+        <input id="passwd" type="password" autocomplete="off" placeholder="登录密码">
+    </div>
+    <p style="text-align: right;color: red;position: absolute" id="info"></p><br/>
+    <div class="form-item">
+        <button id="loginButton">登录</button>
+    </div>
+    <div class="reg-bar">
+        <label>
+            <input type="checkbox" id="remember">记住密码
+        </label>
+        <a class="forget" href="javascript:">忘记密码</a>
+    </div>
+</div>
+<script type="text/javascript"  th:src="@{asserts/js/jquery-3.4.1.js}"></script>
+<script type="text/javascript">
+    $("#id").keyup(
+        function () {
+            if(isNaN($("#id").val())){
+                $("#info").text("提示:账号只能为数字");
+            }
+            else {
+                $("#info").text("");
+            }
+        }
+    )
+    // 记住登录信息，保存到本地cookie
+/*    function rememberLogin(username, password, checked) {
+        Cookies.set('loginStatus', {
+            username: username,
+            password: password,
+            remember: checked
+        }, {expires: 30, path: ''})
+    }*/
+    // 若选择记住登录信息，则进入页面时设置登录信息
+/*    function setLoginStatus() {
+        var loginStatusText = Cookies.get('loginStatus')
+        if (loginStatusText) {
+            var loginStatus
+            try {
+                loginStatus = JSON.parse(loginStatusText);
+                $('#id').val(loginStatus.username);
+                $('#passwd').val(loginStatus.password);
+                $("#remember").prop('checked',true);
+            } catch (__) {}
+        }
+    }
+
+    // 设置登录信息
+    setLoginStatus();*/
+    $("#loginButton").click(function () {
+         // alert("jhhhh");
+        var id =$("#id").val();
+        var passwd=$("#passwd").val();
+        // var remember=$("#remember").prop('checked');
+
+        if( id=='' && passwd==''){
+            $("#info").text("提示:账号和密码不能为空");
+        }
+        else if ( id ==''){
+            $("#info").text("提示:账号不能为空");
+        }
+        else if( passwd ==''){
+            $("#info").text("提示:密码不能为空");
+        }
+        else if(isNaN( id )){
+            $("#info").text("提示:账号必须为数字");
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/api/loginCheck",//检查是否登录成功
+                data: {
+                    id:id ,
+                    passwd: passwd
+                },
+                dataType: "json",
+                success: function(data) {
+                    if(data.stateCode.trim() == "0") {
+                        $("#info").text("提示:账号或密码错误！");
+                    } else if(data.stateCode.trim() == "1") {
+                        $("#info").text("提示:登陆成功，跳转中...");
+                        window.location.href="/admin_main.html";
+                    } else if(data.stateCode.trim() == "2"){
+               /*         if(remember){
+                            rememberLogin(id,passwd,remember);
+                        }else {
+                            Cookies.remove('loginStatus');
+                        }*/
+                        $("#info").text("提示:登陆成功，跳转中...");
+                        window.location.href="/reader_main.html";
+                    }
+                }
+            });
+        }
+    })
+
+</script>
+</body>
+</html>

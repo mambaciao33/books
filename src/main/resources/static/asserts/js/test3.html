@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-3.4.1.js"></script>
+    <style type="text/css">
+        .divcss5{ solid:#F00; width:350px; height:220px}
+    </style>
+</head>
+<body>
+<!--头像-->
+<div class="divcss5">
+<img src="../mm/7ed5720f-42e0-4634-8318-f842277a365a.jpg"  width="250" height="170" id="avarimgs">
+<input type="file"  name="pclogo" id="xdaTanFileImg" onchange="xmTanUploadImg(this)" accept="image/*">
+</div>
+<script type="text/javascript">
+    if (typeof FileReader == 'undefined') {
+        document.getElementById("xmTanDiv").InnerHTML = "<h1>当前浏览器不支持FileReader接口</h1>";
+        document.getElementById("xdaTanFileImg").setAttribute("disabled", "disabled");
+    }
+    //选择图片，马上预览
+    function xmTanUploadImg(obj) {
+        var file = obj.files[0];
+        console.log(obj);console.log(file);
+        console.log("file.size = " + file.size);
+        var reader = new FileReader();
+        reader.onloadstart = function (e) {
+            console.log("开始读取....");
+        }
+        reader.onprogress = function (e) {
+            console.log("正在读取中....");
+        }
+        reader.onabort = function (e) {
+            console.log("中断读取....");
+        }
+        reader.onerror = function (e) {
+            console.log("读取异常....");
+        }
+        reader.onload = function (e) {
+            console.log("成功读取....");
+            var img = document.getElementById("avarimgs");
+            img.src = e.target.result;
+            //或者 img.src = this.result;  //e.target == this
+        }
+        reader.readAsDataURL(file)
+    }
+</script>
+</body>
+</html>
